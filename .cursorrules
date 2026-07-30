@@ -1,0 +1,10 @@
+## Notes learned while editing
+
+- Source of truth for all site text/figures/results is the paper source in `_CoRL_2026__SEW_Policy_Transfer_Human_Data_to_Robot/` (gitignored, do not commit). Final paper title: "WARP: Whole-Body Retargeting for Learning from Offline Human Demonstrations"; acronym = Whole-body-Aware Retargeting from human Pose. The VLM task-priority switcher was cut from the final paper — don't reintroduce it.
+- Convert paper PDF figures to web PNGs with `qlmanage -t -s 2400 -o <dir> fig.pdf` (no pdftoppm/gs/magick installed on this machine).
+
+- For website embedding, prefer `.mp4` (H.264 video + AAC audio) over `.mov`. Many browsers/GitHub Pages setups won’t reliably play `.mov` (or `video/quicktime`) inside `<video>`.
+- Hero header: `.publication-title` (WARP wordmark) sits directly above `.publication-subtitle` as one unit, then a gradient `.title-divider` (an `<hr>`, brand orange→blue, like a markdown `---`), then the `.publication-authors` block (author list, `*`-equal-contribution note, affiliation). No venue/status pills. Keep markup in `index.html` and styling in `static/css/index.css` (Google Sans), not inline. The page is de-anonymized as of the arXiv release (2606.29940) — the old `.anon-note` rule in `index.css` is now unused.
+- Wide content (results tables, BibTeX) must live in a horizontally-scrollable box, or it widens the whole page on mobile and *everything* looks clipped. Wrap tables in Bulma's `.table-container`; `<pre>` already scrolls via Bulma. Verify mobile faithfully with Chrome over CDP using `Emulation.setDeviceMetricsOverride({mobile:true})` — the plain `--screenshot --window-size` path does not emulate the viewport meta and falsely shows clipping.
+- Videos use the reusable `.video-block` wrapper in `index.css`; give each a poster frame pulled from the clip (`static/videos/*_poster.jpg`) and `preload="metadata"` so the large file isn't auto-downloaded on page load.
+

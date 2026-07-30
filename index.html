@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="WARP: Whole-Body Retargeting for Learning from Offline Human Demonstrations.">
+  <meta name="keywords" content="WARP, Retargeting, Humanoid, Whole-Body, Mobile Manipulation, Offline Human Data, SEW, Imitation Learning">
+  <meta name="author" content="Zhenyang Chen, Chuizheng Kong, Chuye Zhang, Yuanshao Yang, Lawrence Y. Zhu, Shreyas Kousik, Danfei Xu">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WARP: Whole-Body Retargeting for Learning from Offline Human Demonstrations</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <!-- Computer Modern (LaTeX) font, used for the results tables -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Serif/cmun-serif.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="./static/images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="256x256" href="./static/images/favicon.png">
+  <link rel="apple-touch-icon" href="./static/images/apple-touch-icon.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<!-- ================================================================
+     Full-screen video splash
+       Row 1 (peach frame) = human demonstrations
+       Row 2 (blue frame)  = robot open-loop replays
+       Columns are task-paired:  box · basket · cart · fridge
+     To reorder/swap a clip, change its <source> + poster paths.
+     ================================================================ -->
+<section class="warp-splash">
+  <div class="warp-grid">
+    <!-- Row 1 · human demonstrations -->
+    <div class="warp-cell warp-cell--human" style="background-image:url('./static/warp_videos/grid/posters/box_human.jpg')">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="./static/warp_videos/grid/box_human.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="warp-cell warp-cell--human" style="background-image:url('./static/warp_videos/grid/posters/basket_human.jpg')">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="./static/warp_videos/grid/basket_human.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="warp-cell warp-cell--human" style="background-image:url('./static/warp_videos/grid/posters/cart_human.jpg')">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="./static/warp_videos/grid/cart_human.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="warp-cell warp-cell--human" style="background-image:url('./static/warp_videos/grid/posters/fridge_human.jpg')">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="./static/warp_videos/grid/fridge_human.mp4" type="video/mp4">
+      </video>
+    </div>
+    <!-- Row 2 · robot open-loop replays -->
+    <div class="warp-cell warp-cell--robot" style="background-image:url('./static/warp_videos/grid/posters/box_robot.jpg')">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="./static/warp_videos/grid/box_robot.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="warp-cell warp-cell--robot" style="background-image:url('./static/warp_videos/grid/posters/basket_robot.jpg')">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="./static/warp_videos/grid/basket_robot.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="warp-cell warp-cell--robot" style="background-image:url('./static/warp_videos/grid/posters/cart_robot.jpg')">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="./static/warp_videos/grid/cart_robot.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="warp-cell warp-cell--robot" style="background-image:url('./static/warp_videos/grid/posters/fridge_robot.jpg')">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="./static/warp_videos/grid/fridge_robot.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- overlays -->
+  <img class="warp-splash-logo" src="./static/images/warp_logo.png" alt="WARP project logo">
+  <div class="warp-splash-center">
+    <img class="warp-splash-wordmark" src="./static/images/warp_wordmark.png"
+         alt="WARP — Geometric Whole-Body Retargeting">
+  </div>
+  <a class="warp-scroll-cue" href="#nav" aria-label="Scroll to content"></a>
+</section>
+
+<nav class="navbar" id="nav" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="#">
+        <span class="icon">
+          <i class="fas fa-home"></i>
+        </span>
+      </a>
+      <a class="navbar-item" href="#abstract">Abstract</a>
+      <a class="navbar-item" href="#motivation">Why WARP</a>
+      <a class="navbar-item" href="#method">Method</a>
+      <a class="navbar-item" href="#results">Results</a>
+      <a class="navbar-item" href="#BibTeX">BibTeX</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <div class="title-with-logo">
+            <img class="warp-title-logo" src="./static/images/warp_logo.png" alt="WARP logo">
+            <h1 class="title publication-title">WARP</h1>
+          </div>
+          <p class="subtitle publication-subtitle">Whole-Body Retargeting for Learning from Offline Human Demonstrations</p>
+
+          <hr class="title-divider" aria-hidden="true">
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://chenzheny.github.io" target="_blank" rel="noopener">Zhenyang Chen</a><sup>*</sup>,</span>
+            <span class="author-block">Chuizheng Kong<sup>*</sup>,</span>
+            <span class="author-block">Chuye Zhang<sup>*</sup>,</span>
+            <span class="author-block">Yuanshao Yang,</span>
+            <span class="author-block">Lawrence Y. Zhu,</span>
+            <span class="author-block"><a href="https://www.shreyaskousik.com" target="_blank" rel="noopener">Shreyas Kousik</a>,</span>
+            <span class="author-block"><a href="https://faculty.cc.gatech.edu/~danfei" target="_blank" rel="noopener">Danfei Xu</a></span>
+          </div>
+          <div class="is-size-6 publication-authors" style="margin-top: 0.25rem; color: #555;">
+            <sup>*</sup>Equal contribution
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Georgia Institute of Technology</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2606.29940" class="external-link button is-normal is-rounded is-dark" target="_blank" rel="noopener">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2606.29940" class="external-link button is-normal is-rounded is-dark" target="_blank" rel="noopener">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>ArXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#BibTeX" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>Citation</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser" id="teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <!-- Reusable video block: copy this <div class="video-block">…</div> to add more clips -->
+      <div class="video-block">
+        <video controls playsinline preload="metadata" poster="./static/videos/warp_supp_video_poster.jpg">
+          <source src="./static/videos/warp_supp_video.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <h2 class="subtitle is-4 has-text-centered video-caption">
+        <b>TL;DR:</b> WARP converts offline human demonstrations into <em>precise</em>, <em>consistent</em> whole-body robot actions in closed form &mdash; enabling open-loop replay and policy learning for whole-body mobile manipulation, with no teleoperation in the loop.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="abstract">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified abstract-text">
+          <p>
+            Direct transfer from human demonstration to learnable robot action is a crucial step towards scalable whole-body mobile manipulation. While human data scales better than mobile teleoperation, it requires overcoming significant embodiment gaps. Existing retargeting methods yield imprecise or inconsistent solutions, causing action multi-modality that prevents supervised policies from reliably converging. We present <b>Whole-body-Aware Retargeting from human Pose (WARP)</b>, an offline pipeline that explicitly models embodiment differences to extract precise, unique whole-body actions. WARP leverages a closed-form Shoulder&ndash;Elbow&ndash;Wrist (SEW) geometric solver for exact end-effector tracking while preserving whole-body structural intent. Paired with lazy mobile-base control, it extracts accurate, consistent robot trajectories. Evaluations show WARP provides highly reliable data for open-loop real-world replay. To our knowledge, WARP is the first framework to achieve zero-shot whole-body mobile manipulation directly from offline human demonstrations, eliminating the need for human-in-the-loop teleoperation action data.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="motivation">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-12">
+        <h2 class="title is-3 has-text-centered">Why Offline Whole-Body Retargeting?</h2>
+        <p class="has-text-centered" style="margin-bottom: 1.25rem;">
+          Whole-body demonstrations are the bottleneck. Teleoperation is expensive, slow, and unnatural; offline human data is cheap, fast, and natural &mdash; with no robot in the loop.
+        </p>
+        <div class="columns is-centered">
+          <div class="column is-6">
+            <div class="video-block">
+              <video class="js-autoplay-inview" muted loop playsinline controls preload="metadata"
+                     poster="./static/videos/warp_teleop_video_poster.jpg">
+                <source src="./static/videos/warp_teleop_video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+          <div class="column is-6">
+            <div class="video-block">
+              <video class="js-autoplay-inview" muted loop playsinline controls preload="metadata"
+                     poster="./static/videos/warp_teleop_explain_poster.jpg">
+                <source src="./static/videos/warp_teleop_explain.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+        <p class="fig-caption has-text-centered">
+          Online teleoperation closes the loop in real time; offline retargeting must replay <b>open-loop</b>, with no operator to correct errors.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="prior-work">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-12">
+        <h2 class="title is-3 has-text-centered">Why Existing Offline Retargeting Falls Short</h2>
+        <p class="has-text-centered" style="margin-bottom: 1rem;">
+          Open-loop replay is unforgiving &mdash; the retargeted trajectory <em>is</em> the supervision. Existing retargeters break two ways:
+        </p>
+        <div class="card-rail cols-2">
+          <div class="info-card">
+            <span class="kicker">Failure mode 1 &middot; Imprecision</span>
+            Weighted IK objectives trade end-effector accuracy against whole-body similarity. Either way, retargeting error becomes <b>supervision error</b>.
+          </div>
+          <div class="info-card">
+            <span class="kicker">Failure mode 2 &middot; Inconsistency</span>
+            Redundant humanoids map nearly identical human poses to <b>different robot configurations</b> across solver seeds &mdash; similar observations, divergent actions.
+          </div>
+        </div>
+        <div class="has-text-centered" style="margin-top: 0.75rem;">
+          <div class="video-block">
+            <video class="js-autoplay-inview" muted loop playsinline controls preload="metadata"
+                   poster="./static/videos/warp_why_not_mink_poster.jpg">
+              <source src="./static/videos/warp_why_not_mink.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <p class="fig-caption">
+            End-effector-only retargeting (MINK-EF) yields <b>imprecise</b>, non-human-like poses; adding elbow/torso targets makes the baseline <b>inconsistent</b>. WARP stays precise <em>and</em> consistent. Plays automatically when in view.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="method">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-12">
+        <h2 class="title is-3 has-text-centered">Method</h2>
+        <p class="has-text-centered" style="margin-bottom: 1rem;">
+          WARP's core, <b>c-SEW</b>, solves retargeting <b>in closed form</b> over the Shoulder&ndash;Elbow&ndash;Wrist representation: the palm is matched exactly as a hard constraint, the remaining freedom preserves the human pose, and joint angles follow analytically &mdash; <em>unique, exact, microseconds per frame, no calibration</em>.
+        </p>
+        <div class="has-text-centered">
+          <div class="video-block">
+            <video class="js-autoplay-inview" muted loop playsinline controls preload="metadata"
+                   poster="./static/videos/warp_method_animation_poster.jpg">
+              <source src="./static/videos/warp_method_animation.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <p class="fig-caption">
+            Animated walkthrough of <b>c-SEW</b>: from the SEW skeleton and end-effector mismatch, through the elbow nullspace, to the unique solved robot configuration. Plays automatically when in view.
+          </p>
+        </div>
+        <div class="card-rail cols-4" style="margin-top: 1rem;">
+          <div class="info-card">
+            <span class="kicker">Adaptive offset</span>
+            Shift the robot upper-body origin so palm centroids coincide with the human's &mdash; link-length differences absorbed in closed form.
+          </div>
+          <div class="info-card">
+            <span class="kicker">Palm alignment</span>
+            Hand orientation transfers directly, the wrist follows analytically, and the elbow lands on the human's SEW half-plane &mdash; at most one valid configuration.
+          </div>
+          <div class="info-card">
+            <span class="kicker">Lazy mobile base</span>
+            The 6-DoF torso absorbs small adjustments; the base moves only for genuine relocation &mdash; stable manipulation, smooth base motion.
+          </div>
+          <div class="info-card">
+            <span class="kicker">Hierarchical policy</span>
+            One flow-matching head, block-causal attention over base &#8828; torso &#8828; arm &#8828; hand &mdash; same inference cost.
+          </div>
+        </div>
+        <p class="has-text-centered fig-caption">
+          <b>Data:</b> a single Meta Quest &mdash; whole body + hands at 60&nbsp;Hz, no mocap rig or robot in the loop. &nbsp;<b>Robot:</b> RB-Y1 (holonomic base, 6-DoF torso, two 7-DoF arms, XHands) at 100&nbsp;Hz.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-small" id="results">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Results</h2>
+
+      <div class="columns is-centered">
+        <div class="column is-12">
+          <h3 class="subtitle is-4 has-text-weight-bold">Retargeting Quality</h3>
+          <div class="content">
+            <p class="has-text-centered fig-caption" style="margin-bottom: 0.75rem;">
+              514 BONES-SEED-SOMA manipulation clips &middot; baselines: MINK-EF (EEF-only), MINK-TE (+torso/elbow), SEW-M &middot; lower is better, <b>bold</b> = best, <u>underline</u> = second.
+            </p>
+            <div class="table-container">
+              <table class="table results-metrics-table tbl-h1">
+                <thead>
+                  <tr>
+                    <th rowspan="2">Method</th>
+                    <th rowspan="2">JL</th>
+                    <th colspan="3">Tracking error &darr;</th>
+                    <th colspan="3">Feasibility &darr;</th>
+                    <th colspan="3">Solver variation &darr;</th>
+                  </tr>
+                  <tr>
+                    <th>Palm<br><span class="unit">mm</span></th>
+                    <th>P95<br><span class="unit">mm</span></th>
+                    <th>Ori.<br><span class="unit">deg</span></th>
+                    <th>Torso<br><span class="unit">frac.</span></th>
+                    <th>Limit<br><span class="unit">frac.</span></th>
+                    <th>Coll.<br><span class="unit">frac.</span></th>
+                    <th>NNAD<br><span class="unit">&mdash;</span></th>
+                    <th>PCA<br><span class="unit">eig.</span></th>
+                    <th>RMS<br><span class="unit">deg</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>SEW-M</td><td>off</td>
+                    <td>178.979</td><td>201.056</td><td><b>7.89e-6</b></td>
+                    <td><b>0.000</b></td><td>0.0126</td><td>0.243</td>
+                    <td>0.488</td><td>1.20e-25</td><td>6.83e-14</td>
+                  </tr>
+                  <tr>
+                    <td>MINK-EF</td><td>off</td>
+                    <td><u>0.701</u></td><td><u>1.853</u></td><td>0.0107</td>
+                    <td>0.625</td><td>0.1610</td><td>0.977</td>
+                    <td>0.368</td><td>173.49</td><td>3.117</td>
+                  </tr>
+                  <tr>
+                    <td>MINK-TE</td><td>off</td>
+                    <td>18.557</td><td>73.980</td><td>0.157</td>
+                    <td><u>0.027</u></td><td>0.0852</td><td>0.640</td>
+                    <td>1.026</td><td>1119.11</td><td>6.106</td>
+                  </tr>
+                  <tr class="warp-row">
+                    <td><b>WARP</b></td><td>off</td>
+                    <td><b>0.0046</b></td><td><b>0.046</b></td><td><u>8.74e-6</u></td>
+                    <td><b>0.000</b></td><td><b>0.0047</b></td><td>0.163</td>
+                    <td><u>0.289</u></td><td>1.14e-25</td><td>6.66e-14</td>
+                  </tr>
+                  <tr class="jl-sep">
+                    <td>SEW-M</td><td>on</td>
+                    <td>215.641</td><td>272.842</td><td>6.304</td>
+                    <td>0.162</td><td>0.0131</td><td><u>0.084</u></td>
+                    <td>0.442</td><td><u>1.09e-25</u></td><td><u>6.56e-14</u></td>
+                  </tr>
+                  <tr>
+                    <td>MINK-EF</td><td>on</td>
+                    <td>0.751</td><td>2.478</td><td>0.0112</td>
+                    <td>0.611</td><td>0.1247</td><td>0.222</td>
+                    <td>0.354</td><td>227.29</td><td>3.169</td>
+                  </tr>
+                  <tr>
+                    <td>MINK-TE</td><td>on</td>
+                    <td>19.492</td><td>69.345</td><td>0.188</td>
+                    <td>0.049</td><td>0.0420</td><td>0.478</td>
+                    <td>0.454</td><td>613.47</td><td>4.964</td>
+                  </tr>
+                  <tr class="warp-row">
+                    <td><b>WARP</b></td><td>on</td>
+                    <td>24.048</td><td>82.036</td><td>3.259</td>
+                    <td>0.130</td><td><u>0.0060</u></td><td><b>0.017</b></td>
+                    <td><b>0.266</b></td><td><b>1.06e-25</b></td><td><b>6.46e-14</b></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="has-text-justified" style="margin-top: 0.85rem;">
+              WARP cuts palm error <b>&gt;150&times;</b> vs MINK-EF at machine-precision orientation, violates joint limits and self-collides the least, is orders of magnitude more consistent, and solves <b>~30&times;</b> faster (an hour vs a day for SEED).
+            </p>
+
+            <div class="task-video-bar">
+              <span class="task-video-label">Qualitative comparison &mdash; pick a task:</span>
+              <div class="select is-rounded">
+                <select id="h1-task-select" aria-label="Select a task to compare retargeters">
+                  <option value="crouch_cupboard_mid_in" selected>Crouch cupboard (mid, in)</option>
+                  <option value="crouch_cupboard_mid_out">Crouch cupboard (mid, out)</option>
+                  <option value="crouch_operating_cupboard_low_in">Crouch operating cupboard (low, in)</option>
+                  <option value="crouch_operating_cupboard_mid_in">Crouch operating cupboard (mid, in)</option>
+                  <option value="crouch_operating_cupboard_mid_out">Crouch operating cupboard (mid, out)</option>
+                  <option value="cutting_bread">Cutting bread</option>
+                  <option value="cutting_masterchiefstyle">Cutting (master-chef style)</option>
+                  <option value="frying_pan">Frying pan</option>
+                  <option value="grating_vegetables">Grating vegetables</option>
+                  <option value="heavy_item_cupboard_high_in">Heavy item cupboard (high, in)</option>
+                  <option value="heavy_item_cupboard_high_out">Heavy item cupboard (high, out)</option>
+                  <option value="looting_cupboard_high">Looting cupboard (high)</option>
+                  <option value="making_friedeggs">Making fried eggs</option>
+                  <option value="operating_blender">Operating blender</option>
+                  <option value="operating_fridge_high_in">Operating fridge (high, in)</option>
+                  <option value="operating_fridge_low_in">Operating fridge (low, in)</option>
+                  <option value="operating_microwave">Operating microwave</option>
+                  <option value="peeling_vegetables">Peeling vegetables</option>
+                  <option value="pounding_meat">Pounding meat</option>
+                  <option value="street_avoid_car_270_walk">Street: avoid car (270, walk)</option>
+                  <option value="street_avoid_obstacle_180_walk">Street: avoid obstacle (180, walk)</option>
+                  <option value="washing_dishes">Washing dishes</option>
+                </select>
+              </div>
+            </div>
+            <div class="video-block video-block--panel">
+              <video id="h1-task-video" autoplay muted loop playsinline preload="auto">
+                <source src="./static/videos/h1/crouch_cupboard_mid_in.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <p class="has-text-centered task-video-caption">
+              Retargeting the same human clip with each method. Left to right: <b>Human</b> input, <b>WARP (ours)</b>, SEW-M, MINK-EF, MINK-TE.
+            </p>
+            <script>
+              (function () {
+                var sel = document.getElementById('h1-task-select');
+                var vid = document.getElementById('h1-task-video');
+                var src = vid.querySelector('source');
+                sel.addEventListener('change', function () {
+                  src.src = './static/videos/h1/' + sel.value + '.mp4';
+                  vid.load();
+                  vid.muted = true;
+                  var p = vid.play();
+                  if (p && p.catch) p.catch(function () {});
+                });
+              })();
+            </script>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered">
+        <div class="column is-12">
+          <h3 class="subtitle is-4 has-text-weight-bold">Policy Learning in Simulation</h3>
+          <div class="content has-text-centered">
+            <img src="./static/images_warp/warp_cross_embodiment.png" alt="WARP retargets one robot motion to different robot embodiments" style="width: 100%; max-width: 100%; height: auto;">
+            <p class="has-text-justified">
+              200 DexMimicGen demos per task, retargeted GR1 &rarr; RB-Y1 with WARP and MINK; identical policy per retargeter. Replay is comparable &mdash; but policies trained on WARP data succeed <b>+12% on average</b>. Nuances invisible at replay become decisive downstream.
+            </p>
+            <div class="table-container">
+              <table class="table results-metrics-table tbl-dex">
+                <thead>
+                  <tr>
+                    <th rowspan="2">Method</th>
+                    <th colspan="2"><i>can_sort</i></th>
+                    <th colspan="2"><i>pouring</i></th>
+                    <th colspan="2"><i>coffee</i></th>
+                    <th colspan="2"><b>average</b></th>
+                  </tr>
+                  <tr>
+                    <th>replay</th><th>policy</th>
+                    <th>replay</th><th>policy</th>
+                    <th>replay</th><th>policy</th>
+                    <th>replay</th><th>policy</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>MINK</td>
+                    <td><b>99.5%</b></td><td>94%</td>
+                    <td>88.5%</td><td>74%</td>
+                    <td>50.5%</td><td>8%</td>
+                    <td>79.5%</td><td>59%</td>
+                  </tr>
+                  <tr class="warp-row">
+                    <td><b>WARP</b></td>
+                    <td>98.5%</td><td><b>100%</b></td>
+                    <td><b>90.5%</b></td><td><b>78%</b></td>
+                    <td><b>51.0%</b></td><td><b>34%</b></td>
+                    <td><b>80.0%</b></td><td><b>71%</b></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="has-text-centered fig-caption">
+              Replay and policy rollout success (%) on DexMimicGen tasks.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered">
+        <div class="column is-12">
+          <h3 class="subtitle is-4 has-text-weight-bold">Real-World Evaluation</h3>
+          <div class="content has-text-centered">
+            <img src="./static/images_warp/warp_task_flow.png" alt="Human demonstrations and robot executions across four real-world tasks" style="width: 100%; max-width: 100%; height: auto;">
+            <p class="fig-caption">
+              50 human demos per task: <b>laundry</b> (bimanual wrists), <b>cart</b> (base&ndash;arm contact), <b>box</b> (torso&ndash;arm twist), <b>fridge</b> &mdash; closed with the <em>elbow</em>, which EEF-only methods cannot even express.
+            </p>
+            <img src="./static/images_warp/warp_hardware_results.png" alt="Real-world replay and policy rollout results, 10 trials each" style="width: 75%; max-width: 100%; height: auto; margin-top: 0.75rem;">
+            <p class="has-text-justified">
+              WARP wins on all four tasks: <b>90%</b> replay on the elbow-contact fridge task, and stronger policies even at equal replay rates (<b>65% vs 40%</b> on rotate-box) &mdash; motion quality, not replay completion, governs downstream success.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="limitations">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-12">
+        <h2 class="title is-3 has-text-centered">Limitations</h2>
+        <div class="content has-text-justified">
+          <p>
+            Our current policy training lacks image observations, which limits the range of tasks we can attempt. We plan to investigate visual-motor policy learning next, and how WARP-retargeted offline human data can support it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{chen2026warp,
+      title     = {WARP: Whole-Body Retargeting for Learning from Offline Human Demonstrations},
+      author    = {Chen, Zhenyang and Kong, Chuizheng and Zhang, Chuye and Yang, Yuanshao and Zhu, Lawrence Y. and Kousik, Shreyas and Xu, Danfei},
+      journal   = {arXiv preprint arXiv:2606.29940},
+      year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-12">
+        <div class="content">
+          <p>
+            Website source format is adapted from the Nerfies project page template.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

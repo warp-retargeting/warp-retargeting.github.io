@@ -1,0 +1,8 @@
+.DS_store
+.DS_Store
+.idea
+_CoRL_2026__SEW_Policy_Transfer_Human_Data_to_Robot/
+
+# Unused source videos — the site serves static/warp_videos/grid/ only
+static/warp_videos/*.mov
+static/warp_videos/*.mp4
