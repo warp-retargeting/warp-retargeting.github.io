@@ -131,10 +131,10 @@
 
           <div class="is-size-5 publication-authors">
             <span class="author-block"><a href="https://chenzheny.github.io" target="_blank" rel="noopener">Zhenyang Chen</a><sup>*</sup>,</span>
-            <span class="author-block">Chuizheng Kong<sup>*</sup>,</span>
-            <span class="author-block">Chuye Zhang<sup>*</sup>,</span>
-            <span class="author-block">Yuanshao Yang,</span>
-            <span class="author-block">Lawrence Y. Zhu,</span>
+            <span class="author-block"><a href="https://kczttm.github.io/" target="_blank" rel="noopener">Chuizheng Kong</a><sup>*</sup>,</span>
+            <span class="author-block"><a href="https://zhangchuye.github.io/" target="_blank" rel="noopener">Chuye Zhang</a><sup>*</sup>,</span>
+            <span class="author-block"><a>Yuanshao Yang</a>,</span>
+            <span class="author-block"><a href="https://lawrencez22.github.io/" target="_blank" rel="noopener">Lawrence Y. Zhu</a>,</span>
             <span class="author-block"><a href="https://www.shreyaskousik.com" target="_blank" rel="noopener">Shreyas Kousik</a>,</span>
             <span class="author-block"><a href="https://faculty.cc.gatech.edu/~danfei" target="_blank" rel="noopener">Danfei Xu</a></span>
           </div>
@@ -473,7 +473,12 @@
         <div class="column is-12">
           <h3 class="subtitle is-4 has-text-weight-bold">Policy Learning in Simulation</h3>
           <div class="content has-text-centered">
-            <img src="./static/images_warp/warp_cross_embodiment.png" alt="WARP retargets one robot motion to different robot embodiments" style="width: 100%; max-width: 100%; height: auto;">
+            <video class="js-autoplay-inview" muted loop playsinline controls preload="metadata"
+                   poster="./static/videos/warp_dexmimicgen_poster.jpg"
+                   style="width: 100%; max-width: 100%; height: auto;">
+              <source src="./static/videos/warp_dexmimicgen.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
             <p class="has-text-justified">
               200 DexMimicGen demos per task, retargeted GR1 &rarr; RB-Y1 with WARP and MINK; identical policy per retargeter. Replay is comparable &mdash; but policies trained on WARP data succeed <b>+12% on average</b>. Nuances invisible at replay become decisive downstream.
             </p>
