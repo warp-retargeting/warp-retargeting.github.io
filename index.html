@@ -32,9 +32,10 @@
 
 <!-- ================================================================
      Full-screen video splash
-       Row 1 (peach frame) = human demonstrations
-       Row 2 (blue frame)  = robot open-loop replays
+       Row 1 (peach frame) = human demonstrations  -> .warp-row-label--human
+       Row 2 (blue frame)  = robot open-loop replay -> .warp-row-label--robot
        Columns are task-paired:  box · basket · cart · fridge
+     Keep the two row labels in sync with whatever clips sit in each row.
      To reorder/swap a clip, change its <source> + poster paths.
      ================================================================ -->
 <section class="warp-splash">
@@ -60,7 +61,7 @@
         <source src="./static/warp_videos/grid/fridge_human.mp4" type="video/mp4">
       </video>
     </div>
-    <!-- Row 2 · robot open-loop replays -->
+    <!-- Row 2 · robot open-loop replay (retargeted trajectory played back; no policy, no teleop) -->
     <div class="warp-cell warp-cell--robot" style="background-image:url('./static/warp_videos/grid/posters/box_robot.jpg')">
       <video autoplay muted loop playsinline preload="auto">
         <source src="./static/warp_videos/grid/box_robot.mp4" type="video/mp4">
@@ -85,6 +86,10 @@
 
   <!-- overlays -->
   <img class="warp-splash-logo" src="./static/images/warp_logo.png" alt="WARP project logo">
+
+  <!-- row labels — one quiet line per band -->
+  <div class="warp-row-label warp-row-label--human">Human demonstration</div>
+  <div class="warp-row-label warp-row-label--robot">Robot open-loop replay</div>
   <div class="warp-splash-center">
     <img class="warp-splash-wordmark" src="./static/images/warp_wordmark.png"
          alt="WARP — Geometric Whole-Body Retargeting">

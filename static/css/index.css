@@ -554,6 +554,35 @@ mjx-container[display="true"] {
 .warp-cell--human { border: 5px solid #f4c19c; }
 .warp-cell--robot { border: 5px solid #a8d3ed; }
 
+/* ---- row labels -------------------------------------------------
+   One quiet line pinned to the bottom-left of each row band, so the
+   robot clips read as replay at a glance without competing with the
+   wordmark. The 50% / bottom anchors stay inside the right band on the
+   2x4 phone layout too.
+   ----------------------------------------------------------------- */
+.warp-row-label {
+  position: absolute;
+  left: clamp(0.65rem, 1.7vw, 1.6rem);
+  z-index: 4;
+  padding: 0.16rem 0.5rem 0.2rem;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.32);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  font-size: clamp(0.6rem, 0.72vw, 0.72rem);
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  line-height: 1.35;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+
+/* bottom edge of row 1 (the grid's mid-line) and of row 2 (the viewport) */
+.warp-row-label--human { top: 50%; transform: translateY(calc(-100% - 0.55rem)); }
+.warp-row-label--robot { bottom: clamp(0.65rem, 1.7vw, 1.6rem); }
+
 /* orbital project logo, upper-left */
 .warp-splash-logo {
   position: absolute;
@@ -634,6 +663,10 @@ mjx-container[display="true"] {
   .warp-splash-wordmark { width: min(78vw, 360px); }
   .warp-cell--human,
   .warp-cell--robot { border-width: 4px; }
+  .warp-row-label {
+    max-width: min(80vw, 300px);
+    white-space: normal;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
