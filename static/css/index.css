@@ -288,6 +288,44 @@ body {
     color: #374151;
 }
 
+/* ---- Hero venue badge (acceptance pill, sits between subtitle and divider) ---- */
+.publication-venue-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 1.05rem auto 0;
+    padding: 0.4rem 1.05rem;
+    border: 1px solid rgba(245, 130, 31, 0.38);
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(245, 130, 31, 0.10) 0%, rgba(74, 144, 217, 0.10) 100%);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    font-family: 'Google Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    color: #1b2a4a;
+}
+
+.publication-venue-badge .venue-dot {
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f5821f 0%, #4a90d9 100%);
+}
+
+.publication-venue-badge .venue-name {
+    font-weight: 800;
+}
+
+@media screen and (max-width: 480px) {
+    .publication-venue-badge {
+        font-size: 0.85rem;
+        padding: 0.35rem 0.85rem;
+    }
+}
+
 .publication-authors {
     font-family: 'Google Sans', sans-serif;
 }
